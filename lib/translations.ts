@@ -103,8 +103,9 @@ export const az = {
   }
 };
 
-// 🇬🇧 English Translations (existing)
+// 🇬🇧 English Translations
 export const en = {
+  // Navigation
   nav: {
     dashboard: "Dashboard",
     goals: "Goals", 
@@ -115,5 +116,94 @@ export const en = {
     settings: "Settings",
     logout: "Logout",
   },
-  // ... (existing English translations)
+  
+  // Auth
+  auth: {
+    login: "Login",
+    register: "Register",
+    email: "Email",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    welcome: "Welcome!",
+    welcomeBack: "Welcome back!",
+  },
+  
+  // Dashboard
+  dashboard: {
+    welcome: "Welcome to Your Financial Journey!",
+    totalIncome: "Total Income",
+    totalExpenses: "Total Expenses",
+    netAmount: "Net Amount",
+    savingsRate: "Savings Rate",
+    dailySave: "Daily Save",
+    weeklySave: "Weekly Save",
+  },
+  
+  // Goals
+  goals: {
+    newGoal: "New Goal",
+    goalName: "Goal Name",
+    targetAmount: "Target Amount",
+    currentAmount: "Current Amount",
+    targetDate: "Target Date",
+    emergencyFund: "Emergency Fund",
+    saveDaily: "Save Daily",
+    saveWeekly: "Save Weekly",
+    completed: "Completed!",
+    inProgress: "In Progress",
+  },
+  
+  // Income
+  income: {
+    addIncome: "Add Income",
+    sourceName: "Income Source",
+    amount: "Amount",
+    frequency: "Frequency",
+    hourly: "Hourly",
+    daily: "Daily",
+    weekly: "Weekly",
+    monthly: "Monthly",
+    yearly: "Yearly",
+  },
+  
+  // Expenses
+  expenses: {
+    addExpense: "Add Expense",
+    expenseName: "Expense Name",
+    fixedExpense: "Fixed Expense",
+    variableExpense: "Variable Expense",
+    dayOfMonth: "Day of Month",
+    addQuick: "Quick Add",
+  },
+  
+  // Common
+  common: {
+    save: "Save",
+    cancel: "Cancel",
+    edit: "Edit",
+    delete: "Delete",
+    add: "Add",
+    loading: "Loading...",
+    success: "Success!",
+    error: "Error",
+    confirm: "Confirm",
+    yes: "Yes",
+    no: "No",
+  },
+  
+  // Landing Page
+  landing: {
+    title: "Your Financial Journey Starts Here",
+    subtitle: "Plan your path to financial freedom with smart savings goals, gamified progress tracking, and AI-powered business analysis.",
+    getStarted: "Get Started",
+    signIn: "Sign In",
+    features: {
+      pathfinder: "Pathfinder Goals",
+      progress: "Progress Tracking",
+      aiAnalysis: "AI Business Analysis",
+      emergencyFund: "Emergency Fund Mode",
+      quickAdd: "Quick Add",
+      automation: "Automation",
+    }
+  }
 };
