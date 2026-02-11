@@ -27,11 +27,13 @@ import {
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/language-context";
 import { registerSchema, type RegisterInput } from "@/lib/validations";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -94,17 +96,17 @@ export default function RegisterPage() {
       <Card className="glass border-0 shadow-2xl">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">
-            Start your financial journey
+            {language === "az" ? "Maliyyə səyahətinizə başlayın" : "Start your financial journey"}
           </CardTitle>
           <CardDescription>
-            Create an account to begin planning your path
+            {language === "az" ? "Yolunuzu planlaşdırmağa başlamaq üçün hesab yaradın" : "Create an account to begin planning your path"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Account Type Selection */}
             <div className="space-y-3">
-              <Label>Account Type</Label>
+              <Label>{language === "az" ? "Hesab Növü" : "Account Type"}</Label>
               <RadioGroup
                 value={selectedRole}
                 onValueChange={(value) =>
@@ -141,9 +143,9 @@ export default function RegisterPage() {
                     />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium">Personal</p>
+                    <p className="font-medium">{language === "az" ? "Şəxsi" : "Personal"}</p>
                     <p className="text-xs text-muted-foreground">
-                      For individuals
+                      {language === "az" ? "Fərdlər üçün" : "For individuals"}
                     </p>
                   </div>
                   {selectedRole === "PERSONAL" && (
@@ -186,9 +188,9 @@ export default function RegisterPage() {
                     />
                   </div>
                   <div className="text-center">
-                    <p className="font-medium">Business</p>
+                    <p className="font-medium">{language === "az" ? "Biznes" : "Business"}</p>
                     <p className="text-xs text-muted-foreground">
-                      For companies
+                      {language === "az" ? "Şirkətlər üçün" : "For companies"}
                     </p>
                   </div>
                   {selectedRole === "COMPANY" && (
@@ -209,12 +211,12 @@ export default function RegisterPage() {
 
             {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{language === "az" ? "Ad və Soyad" : "Full Name"}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="name"
-                  placeholder="John Doe"
+                  placeholder={language === "az" ? "Əli Vəliyev" : "John Doe"}
                   className="pl-10"
                   {...register("name")}
                 />
@@ -233,12 +235,12 @@ export default function RegisterPage() {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
-                  <Label htmlFor="companyName">Company Name</Label>
+                  <Label htmlFor="companyName">{language === "az" ? "Şirkət Adı" : "Company Name"}</Label>
                   <div className="relative">
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
                       id="companyName"
-                      placeholder="Acme Inc."
+                      placeholder={language === "az" ? "Şirkət MMC" : "Acme Inc."}
                       className="pl-10"
                       {...register("companyName")}
                     />
@@ -254,13 +256,13 @@ export default function RegisterPage() {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{language === "az" ? "E-poçt" : "Email"}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={language === "az" ? "siz@misal.com" : "you@example.com"}
                   className="pl-10"
                   {...register("email")}
                 />
@@ -272,7 +274,7 @@ export default function RegisterPage() {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{language === "az" ? "Şifrə" : "Password"}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -292,7 +294,7 @@ export default function RegisterPage() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{language === "az" ? "Şifrəni Təsdiqlə" : "Confirm Password"}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
@@ -320,11 +322,11 @@ export default function RegisterPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Creating account...
+                  {language === "az" ? "Hesab yaradılır..." : "Creating account..."}
                 </>
               ) : (
                 <>
-                  Create Account
+                  {language === "az" ? "Hesab Yarat" : "Create Account"}
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -333,13 +335,13 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">
-              Already have an account?{" "}
+              {language === "az" ? "Artıq hesabınız var?" : "Already have an account?"}{" "}
             </span>
             <Link
               href="/login"
               className="font-medium text-primary hover:underline"
             >
-              Sign in
+              {language === "az" ? "Daxil olun" : "Sign in"}
             </Link>
           </div>
         </CardContent>
