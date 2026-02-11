@@ -40,27 +40,45 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      if (result?.error) {
+      console.log("SignIn result:", result); // Debug
+
+      if (!result) {
         toast({
-          title: "Error",
-          description: "Invalid email or password",
+          title: language === "az" ? "Xəta" : "Error",
+          description: language === "az" ? "Daxil olmaq mümkün olmadı" : "Could not sign in",
           variant: "destructive",
         });
         return;
       }
 
-      toast({
-        title: "Welcome back!",
-        description: "Redirecting to your dashboard...",
-        variant: "success",
-      });
+      if (result.error) {
+        console.log("SignIn error:", result.error); // Debug
+        toast({
+          title: language === "az" ? "Xəta" : "Error",
+          description: language === "az" ? "E-poçt və ya şifrə yanlışdır" : "Invalid email or password",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      router.push("/dashboard");
-      router.refresh();
-    } catch {
+      if (result.ok) {
+        toast({
+          title: language === "az" ? "Xoş gəldiniz!" : "Welcome back!",
+          description: language === "az" ? "Dashboard-a yönləndirilir..." : "Redirecting to your dashboard...",
+          variant: "success",
+        });
+
+        // Kiçik gecikmə ilə redirect (session yaradılması üçün)
+        setTimeout(() => {
+          router.push("/dashboard");
+          router.refresh();
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
+        title: language === "az" ? "Xəta" : "Error",
+        description: language === "az" ? "Bir şey yanlış getdi. Yenidən cəhd edin." : "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
