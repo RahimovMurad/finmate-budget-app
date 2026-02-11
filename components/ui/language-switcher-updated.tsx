@@ -13,6 +13,11 @@ import { Globe } from "lucide-react";
 export function LanguageSwitcher() {
   const { language, setLanguage, t } = useLanguage();
 
+  // SSR problemının qarşısını almaq üçün
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
