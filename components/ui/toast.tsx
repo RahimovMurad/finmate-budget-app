@@ -31,6 +31,8 @@ const toastVariants = cva(
         default: "border bg-background text-foreground",
         destructive:
           "destructive border-destructive bg-destructive text-destructive-foreground",
+        success:
+          "border-green-500 bg-green-50 text-green-900",
       },
     },
   }
@@ -118,4 +120,5 @@ export {
   ToastClose,
   ToastTitle,
   ToastDescription,
+  ToastViewport,
 };
