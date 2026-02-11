@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { QuickAddDialog } from "./quick-add-dialog";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import type { UserRole } from "@prisma/client";
 
 interface DashboardHeaderProps {
@@ -63,6 +64,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+          
           {/* Quick Add Button */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button

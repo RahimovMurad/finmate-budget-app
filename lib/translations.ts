@@ -1,0 +1,119 @@
+// 🇦🇿 Azərbaycan Dil Tərcümələri
+export const az = {
+  // Navigation
+  nav: {
+    dashboard: "İdarəetmə Paneli",
+    goals: "Hədəflər",
+    income: "Gəlir",
+    expenses: "Xərclər",
+    departments: "Şöbələr",
+    analyze: "Analiz",
+    settings: "Qurğular",
+    logout: "Çıxış",
+  },
+  
+  // Auth
+  auth: {
+    login: "Daxil ol",
+    register: "Qeydiyyat",
+    email: "E-poçt",
+    password: "Şifrə",
+    confirmPassword: "Şifrəni təsdiqlə",
+    welcome: "Xoş gəldiniz!",
+    welcomeBack: "Xoş gəldiniz!",
+  },
+  
+  // Dashboard
+  dashboard: {
+    welcome: "Maliyyə Səyahətinizə Xoş Gəldiniz!",
+    totalIncome: "Ümumi Gəlir",
+    totalExpenses: "Ümumi Xərclər",
+    netAmount: "Xalis Məbləğ",
+    savingsRate: "Qənaat Nisbəti",
+    dailySave: "Günlük Qənaat",
+    weeklySave: "Həftəlik Qənaat",
+  },
+  
+  // Goals
+  goals: {
+    newGoal: "Yeni Hədəf",
+    goalName: "Hədəfin Adı",
+    targetAmount: "Hədəf Məbləği",
+    currentAmount: "Cari Məbləğ",
+    targetDate: "Hədəf Tarixi",
+    emergencyFund: "Təcili Fond",
+    saveDaily: "Günlük Qənaat",
+    saveWeekly: "Həftəlik Qənaat",
+    completed: "Tamamlandı!",
+    inProgress: "Davam edir",
+  },
+  
+  // Income
+  income: {
+    addIncome: "Gəlir Əlavə Et",
+    sourceName: "Gəlir Mənbəyi",
+    amount: "Məbləğ",
+    frequency: "Tezlik",
+    hourly: "Saatlıq",
+    daily: "Günlük",
+    weekly: "Həftəlik",
+    monthly: "Aylıq",
+    yearly: "İllik",
+  },
+  
+  // Expenses
+  expenses: {
+    addExpense: "Xərc Əlavə Et",
+    expenseName: "Xərcin Adı",
+    fixedExpense: "Sabit Xərc",
+    variableExpense: "Dəyişən Xərc",
+    dayOfMonth: "Ayın Günü",
+    addQuick: "Sürətli Əlavə",
+  },
+  
+  // Common
+  common: {
+    save: "Yadda saxla",
+    cancel: "Ləğv et",
+    edit: "Redaktə et",
+    delete: "Sil",
+    add: "Əlavə et",
+    loading: "Yüklənir...",
+    success: "Uğurlu!",
+    error: "Xəta",
+    confirm: "Təsdiqlə",
+    yes: "Bəli",
+    no: "Xeyr",
+  },
+  
+  // Landing Page
+  landing: {
+    title: "Maliyyə Səyahətiniz Buradan Başlayır",
+    subtitle: "Ağıllı qənaat hədəfləri və AI-powered biznes analizi ilə maliyyə azadlığına aparan qrafiklı büdcə planlama.",
+    getStarted: "Başla",
+    signIn: "Daxil ol",
+    features: {
+      pathfinder: "Pathfinder Hədəfləri",
+      progress: "Proqres İzləmə",
+      aiAnalysis: "AI Biznes Analizi",
+      emergencyFund: "Təcili Fond Rejimi",
+      quickAdd: "Sürətli Əlavə",
+      automation: "Avtomatlaşdırma",
+    }
+  }
+};
+
+// 🇬🇧 English Translations (existing)
+export const en = {
+  nav: {
+    dashboard: "Dashboard",
+    goals: "Goals", 
+    income: "Income",
+    expenses: "Expenses",
+    departments: "Departments",
+    analyze: "Analyze",
+    settings: "Settings",
+    logout: "Logout",
+  },
+  // ... (existing English translations)
+};
