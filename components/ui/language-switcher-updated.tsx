@@ -9,13 +9,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function LanguageSwitcher() {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const [mounted, setMounted] = useState(false);
 
-  // SSR problemının qarşısını almaq üçün
-  if (typeof window === "undefined") {
-    return null;
+  // Client-side mounting fix
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="sm">
+        <Globe className="w-4 h-4 mr-2" />
+        🇦🇿 AZ
+      </Button>
+    );
   }
 
   return (
