@@ -25,6 +25,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { QuickAddDialog } from "./quick-add-dialog";
 import { LanguageSwitcher } from "@/components/ui/language-switcher-updated";
+import { useLanguage } from "@/contexts/language-context";
 import type { UserRole } from "@prisma/client";
 
 interface DashboardHeaderProps {
@@ -40,6 +41,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
   const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const { language } = useLanguage();
 
   const initials = user.name
     ? user.name
@@ -76,7 +78,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               className="gap-2"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Quick Add</span>
+              <span className="hidden sm:inline">
+                {language === "az" ? "Sürətli Əlavə" : "Quick Add"}
+              </span>
             </Button>
           </motion.div>
 
@@ -111,7 +115,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col">
-                  <span>{user.name || "User"}</span>
+                  <span>{user.name || (language === "az" ? "İstifadəçi" : "User")}</span>
                   <span className="text-xs font-normal text-muted-foreground">
                     {user.email}
                   </span>
@@ -121,13 +125,13 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings" className="cursor-pointer">
                   <User className="w-4 h-4 mr-2" />
-                  Profile
+                  {language === "az" ? "Profil" : "Profile"}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/dashboard/settings" className="cursor-pointer">
                   <Settings className="w-4 h-4 mr-2" />
-                  Settings
+                  {language === "az" ? "Qurğular" : "Settings"}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -136,7 +140,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                 className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign out
+                {language === "az" ? "Çıxış" : "Sign out"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
