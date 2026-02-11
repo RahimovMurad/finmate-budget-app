@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack -H 0.0.0.0 -p 3000",
     "dev:https": "cross-env USE_HTTPS=true NODE_ENV=development node server.js",
     "setup-https": "node scripts/setup-https.js",
-    "build": "prisma db push --accept-data-loss && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
