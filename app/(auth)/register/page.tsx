@@ -45,7 +45,7 @@ export default function RegisterPage() {
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      role: undefined,
+      role: "PERSONAL",
     },
   });
 
