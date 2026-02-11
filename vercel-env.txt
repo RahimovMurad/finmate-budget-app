@@ -1,0 +1,11 @@
+# Vercel Environment Variables
+# Bu dəyərləri Vercel dashboard-da əlavə edin
+
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.zxeanxyfinbptqyzlsks.supabase.co:5432/postgres
+
+AUTH_SECRET=a2c4c058fa1b7f82dd77b78d4061b42d05839dc11824d3c1531a94015e60297f
+
+NEXTAUTH_URL=https://finmate-budget-app.vercel.app
+
+# ƏQƏR İstəyirsiniz (Optional):
+# OPENAI_API_KEY=sk-your-openai-key
