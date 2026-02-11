@@ -54,45 +54,62 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+        try {
+          console.log("Auth authorize called with:", { email: credentials?.email });
+          
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Missing credentials");
+            throw new Error("Invalid credentials");
+          }
+
+          const email = credentials.email as string;
+          const password = credentials.password as string;
+
+          console.log("Finding user in database...");
+          const user = await prisma.user.findUnique({
+            where: { email },
+          });
+
+          console.log("User found:", !!user);
+
+          if (!user || !user.password) {
+            console.log("User not found or no password");
+            throw new Error("Invalid credentials");
+          }
+
+          console.log("Comparing passwords...");
+          const isPasswordValid = await bcrypt.compare(password, user.password);
+          console.log("Password valid:", isPasswordValid);
+
+          if (!isPasswordValid) {
+            console.log("Invalid password");
+            throw new Error("Invalid credentials");
+          }
+
+          console.log("Authentication successful for user:", user.id);
+          
+          // Return user with custom fields - explicitly typed to avoid adapter type conflicts
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            role: user.role,
+            companyName: user.companyName,
+            onboardingComplete: user.onboardingComplete,
+          } as {
+            id: string;
+            email: string;
+            name: string | null;
+            image: string | null;
+            role: UserRole;
+            companyName: string | null;
+            onboardingComplete: boolean;
+          };
+        } catch (error) {
+          console.error("Auth authorize error:", error);
+          throw error;
         }
-
-        const email = credentials.email as string;
-        const password = credentials.password as string;
-
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
-
-        if (!user || !user.password) {
-          throw new Error("Invalid credentials");
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) {
-          throw new Error("Invalid credentials");
-        }
-
-        // Return user with custom fields - explicitly typed to avoid adapter type conflicts
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          role: user.role,
-          companyName: user.companyName,
-          onboardingComplete: user.onboardingComplete,
-        } as {
-          id: string;
-          email: string;
-          name: string | null;
-          image: string | null;
-          role: UserRole;
-          companyName: string | null;
-          onboardingComplete: boolean;
-        };
       },
     }),
   ],
