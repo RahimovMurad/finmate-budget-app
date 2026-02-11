@@ -12,6 +12,7 @@ import {
   PiggyBank,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 export default function HomePage() {
   return (
@@ -26,6 +27,7 @@ export default function HomePage() {
             <span className="text-xl font-bold text-gradient">FinMate</span>
           </Link>
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             <Link href="/login">
               <Button variant="ghost" size="sm">
                 Sign In
