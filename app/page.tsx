@@ -13,8 +13,11 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher-updated";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function HomePage() {
+  const { language, t } = useLanguage();
+
   return (
     <div className="min-h-screen mesh-gradient">
       {/* Navigation */}
@@ -30,12 +33,12 @@ export default function HomePage() {
             <LanguageSwitcher />
             <Link href="/login">
               <Button variant="ghost" size="sm">
-                Sign In
+                {language === "az" ? "Daxil ol" : "Sign In"}
               </Button>
             </Link>
             <Link href="/register">
               <Button variant="gradient" size="sm">
-                Get Started
+                {language === "az" ? "Başla" : "Get Started"}
               </Button>
             </Link>
           </div>
@@ -59,31 +62,36 @@ export default function HomePage() {
             >
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">
-                Gamified Budget Planning
+                {language === "az" ? "Oyunlaşdırılmış Büdcə Planlama" : "Gamified Budget Planning"}
               </span>
             </motion.div>
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              Your Financial
+              {language === "az" ? "Maliyyə" : "Your Financial"}
               <br />
-              <span className="text-gradient">Journey</span> Starts Here
+              <span className="text-gradient">
+                {language === "az" ? "Səyahətiniz" : "Journey"}
+              </span>
+              {language === "az" ? " Buradan Başlayır" : " Starts Here"}
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Plan your path to financial freedom with smart savings goals,
-              gamified progress tracking, and AI-powered business analysis.
+              {language === "az" 
+                ? "Ağıllı qənaat hədəfləri və AI-powered biznes analizi ilə maliyyə azadlığına aparan qrafiklı büdcə planlama."
+                : "Plan your path to financial freedom with smart savings goals, gamified progress tracking, and AI-powered business analysis."
+              }
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/register">
                 <Button variant="gradient" size="xl" className="group">
-                  Start Your Path
+                  {language === "az" ? "Səyahətinə Başla" : "Start Your Path"}
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
               <Link href="/login">
                 <Button variant="outline" size="xl">
-                  I Already Have an Account
+                  {language === "az" ? "Hesabım Var" : "I Already Have an Account"}
                 </Button>
               </Link>
             </div>
@@ -190,12 +198,16 @@ export default function HomePage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Everything You Need to{" "}
-              <span className="text-gradient">Succeed</span>
+              {language === "az" ? "Uğur üçün Lazım olan" : "Everything You Need to"}{" "}
+              <span className="text-gradient">
+                {language === "az" ? "Hər Şey" : "Succeed"}
+              </span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Whether you&apos;re managing personal finances or running a business,
-              FinMate has the tools you need.
+              {language === "az"
+                ? "Şəxsi maliyyənizi idarə edirsinizsə və ya biznes qurursunuz, FinMate-in lazımi alətləri var."
+                : "Whether you're managing personal finances or running a business, FinMate has the tools you need."
+              }
             </p>
           </motion.div>
 
@@ -203,44 +215,50 @@ export default function HomePage() {
             {[
               {
                 icon: Target,
-                title: "Pathfinder Goals",
-                description:
-                  "Set savings goals and get a daily, weekly, and monthly breakdown of exactly how much to save.",
+                title: language === "az" ? "Pathfinder Hədəfləri" : "Pathfinder Goals",
+                description: language === "az"
+                  ? "Qənaat hədəfləri qurun və gündəlik, həftəlik və aylıq olaraq nə qədər qənaat etməli olduğunuzu əldə edin."
+                  : "Set savings goals and get a daily, weekly, and monthly breakdown of exactly how much to save.",
                 color: "from-violet-500 to-violet-600",
               },
               {
                 icon: TrendingUp,
-                title: "Progress Tracking",
-                description:
-                  "Beautiful circular progress bars and charts show exactly where you stand on your financial journey.",
+                title: language === "az" ? "Proqres İzləmə" : "Progress Tracking",
+                description: language === "az"
+                  ? "Gözəl dairəvi proqres barları və qrafiklər maliyyə səyahətinizdə harada olduğunuzu göstərir."
+                  : "Beautiful circular progress bars and charts show exactly where you stand on your financial journey.",
                 color: "from-emerald-500 to-emerald-600",
               },
               {
                 icon: Sparkles,
-                title: "AI Business Analysis",
-                description:
-                  "For business owners: Get AI-powered suggestions on where to cut costs based on efficiency ratings.",
+                title: language === "az" ? "AI Biznes Analizi" : "AI Business Analysis",
+                description: language === "az"
+                  ? "Biznes sahibləri üçün: Effektivlik reytinqlərinə əsasən harada xərc kəsməyi tövsiyə edən AI-powered təkliflər."
+                  : "For business owners: Get AI-powered suggestions on where to cut costs based on efficiency ratings.",
                 color: "from-amber-500 to-orange-500",
               },
               {
                 icon: Shield,
-                title: "Emergency Fund Mode",
-                description:
-                  "Toggle on the 20% buffer for any goal to build in a safety net automatically.",
+                title: language === "az" ? "Təcili Fond Rejimi" : "Emergency Fund Mode",
+                description: language === "az"
+                  ? "Hər hansı bir hədəf üçün 20% buffer-i aktiv edin və avtomatik olaraq təhlükəsizlik şəbəkəsi qurun."
+                  : "Toggle on the 20% buffer for any goal to build in a safety net automatically.",
                 color: "from-sky-500 to-blue-500",
               },
               {
                 icon: Zap,
-                title: "Quick Add Actions",
-                description:
-                  "Log variable expenses and extra earnings with just a tap from the dashboard.",
+                title: language === "az" ? "Sürətli Əlavə" : "Quick Add Actions",
+                description: language === "az"
+                  ? "Dəyişən xərcləri və əlavə qazancı dashboard-dan sadəcə bir toxunuşla qeyd edin."
+                  : "Log variable expenses and extra earnings with just a tap from the dashboard.",
                 color: "from-pink-500 to-rose-500",
               },
               {
                 icon: PiggyBank,
-                title: "Fixed Expense Automation",
-                description:
-                  "Set it and forget it. Fixed expenses auto-deduct on their scheduled days.",
+                title: language === "az" ? "Sabit Xərc Avtomatlaşdırma" : "Fixed Expense Automation",
+                description: language === "az"
+                  ? "Qurun və unudun. Sabit xərclər planlaşdırılmış günlərdə avtomatik olaraq çıxılır."
+                  : "Set it and forget it. Fixed expenses auto-deduct on their scheduled days.",
                 color: "from-indigo-500 to-purple-500",
               },
             ].map((feature, index) => (
@@ -283,18 +301,20 @@ export default function HomePage() {
             {/* Content */}
             <div className="relative text-center text-white">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Ready to Start Your Path?
+                {language === "az" ? "Səyahətinizə Başlamağa Hazırsınız?" : "Ready to Start Your Path?"}
               </h2>
               <p className="text-white/80 max-w-xl mx-auto mb-8">
-                Join thousands of users who are already on their way to
-                financial freedom. No credit card required.
+                {language === "az"
+                  ? "Artıq maliyyə azadlığı yolunda olan minlərlə istifadəçiyə qoşulun. Kredit kartı tələb olunmur."
+                  : "Join thousands of users who are already on their way to financial freedom. No credit card required."
+                }
               </p>
               <Link href="/register">
                 <Button
                   size="xl"
                   className="bg-white text-violet-600 hover:bg-white/90"
                 >
-                  Create Free Account
+                  {language === "az" ? "Pulsuz Hesab Yarat" : "Create Free Account"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -313,7 +333,7 @@ export default function HomePage() {
             <span className="font-semibold">FinMate</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FinMate. All rights reserved.
+            © {new Date().getFullYear()} FinMate. {language === "az" ? "Bütün hüquqlar qorunur." : "All rights reserved."}
           </p>
         </div>
       </footer>
