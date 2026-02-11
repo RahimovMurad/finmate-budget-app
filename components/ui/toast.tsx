@@ -121,4 +121,5 @@ export {
   ToastTitle,
   ToastDescription,
   ToastViewport,
+  ToastProvider,
 };
