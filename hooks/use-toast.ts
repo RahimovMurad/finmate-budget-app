@@ -173,7 +173,7 @@ function useToast() {
   React.useEffect(() => {
     listeners.push(setState);
     return () => {
-      const index = listeners.indexOf(setState);
+      let index = listeners.indexOf(setState);
       if (index > -1) {
         listeners.splice(index, 1);
       }
