@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { QuickAddDialog } from "./quick-add-dialog";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { LanguageSwitcher } from "@/components/ui/language-switcher-updated";
 import type { UserRole } from "@prisma/client";
 
 interface DashboardHeaderProps {

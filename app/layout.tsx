@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAMeta } from "@/components/pwa-meta";
+import { LanguageProvider } from "@/contexts/language-context";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -64,15 +65,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="az" className="dark">
       <body
         className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
         <PWAMeta />
-        {children}
-        <Toaster />
+        <LanguageProvider>
+          {children}
+          <Toaster />
+        </LanguageProvider>
       </body>
     </html>
   );
 }
-
