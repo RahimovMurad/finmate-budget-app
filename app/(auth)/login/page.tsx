@@ -32,8 +32,10 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
+    console.log("Login attempt started:", { email: data.email });
 
     try {
+      console.log("Calling signIn...");
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -43,6 +45,7 @@ export default function LoginPage() {
       console.log("SignIn result:", result); // Debug
 
       if (!result) {
+        console.log("No result returned from signIn");
         toast({
           title: language === "az" ? "Xəta" : "Error",
           description: language === "az" ? "Daxil olmaq mümkün olmadı" : "Could not sign in",
@@ -62,6 +65,7 @@ export default function LoginPage() {
       }
 
       if (result.ok) {
+        console.log("SignIn successful, redirecting...");
         toast({
           title: language === "az" ? "Xoş gəldiniz!" : "Welcome back!",
           description: language === "az" ? "Dashboard-a yönləndirilir..." : "Redirecting to your dashboard...",
@@ -74,7 +78,7 @@ export default function LoginPage() {
         }, 1000);
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error caught:", error); // Debug
       toast({
         title: language === "az" ? "Xəta" : "Error",
         description: language === "az" ? "Bir şey yanlış getdi. Yenidən cəhd edin." : "Something went wrong. Please try again.",
