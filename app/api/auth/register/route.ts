@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
+import { Prisma } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: "Server misconfigured: DATABASE_URL is missing" },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
 
     // Validate input
@@ -63,6 +71,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid input data" },
         { status: 400 }
+      );
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      return NextResponse.json(
+        {
+          error: "Database error",
+          code: error.code,
+          message: error.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      return NextResponse.json(
+        {
+          error: "Database connection error",
+          message: error.message,
+        },
+        { status: 500 }
       );
     }
 
