@@ -12,7 +12,7 @@ import {
   PiggyBank,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { LanguageSwitcher } from "@/components/ui/language-switcher-updated";
 
 export default function HomePage() {
   return (
