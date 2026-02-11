@@ -68,11 +68,10 @@ export default function LoginPage() {
           variant: "success",
         });
 
-        // Kiçik gecikmə ilə redirect (session yaradılması üçün)
+        // Tam səhifə yeniləmə ilə redirect (middleware session-i tani sin deye)
         setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 500);
+          window.location.href = "/dashboard";
+        }, 1000);
       }
     } catch (error) {
       console.error("Login error:", error);
