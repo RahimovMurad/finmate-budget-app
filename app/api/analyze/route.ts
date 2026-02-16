@@ -45,66 +45,116 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only company users can use this feature
-    if (session.user.role !== "COMPANY") {
+    // Only company users can use advanced business analysis, but personal users can use basic analysis
+    if (session.user.role !== "COMPANY" && session.user.role !== "PERSONAL") {
       return NextResponse.json(
-        { error: "This feature is only available for business accounts" },
+        { error: "Invalid user role" },
         { status: 403 }
       );
     }
 
+    const isCompany = session.user.role === "COMPANY";
+
     const body: AnalysisRequest = await request.json();
     const { goalType, growthTarget } = body;
 
-    // Fetch company's departments with efficiency ratings
-    const departments = await prisma.department.findMany({
-      where: {
-        userId: session.user.id,
-        isActive: true,
-      },
-      orderBy: {
-        efficiencyRating: "asc",
-      },
-    });
+    // Fetch data based on user type
+    let expenseData: ExpenseData[] = [];
+    let totalBudget = 0;
+    let avgEfficiency = 0;
+    let lowEfficiencyDepts: ExpenseData[] = [];
+    let highEfficiencyDepts: ExpenseData[] = [];
+    let highCostDepts: ExpenseData[] = [];
 
-    if (departments.length === 0) {
-      return NextResponse.json(
-        { error: "No departments found. Please add departments with efficiency ratings first." },
-        { status: 400 }
-      );
+    if (isCompany) {
+      // Fetch company's departments with efficiency ratings
+      const departments = await prisma.department.findMany({
+        where: {
+          userId: session.user.id,
+          isActive: true,
+        },
+        orderBy: {
+          efficiencyRating: "asc",
+        },
+      });
+
+      if (departments.length === 0) {
+        return NextResponse.json(
+          { error: "No departments found. Please add departments with efficiency ratings first." },
+          { status: 400 }
+        );
+      }
+
+      // Format expense data for AI
+      expenseData = departments.map((dept: {
+        name: string;
+        totalBudget: number;
+        efficiencyRating: number;
+        description: string | null;
+        headcount: number | null;
+      }) => ({
+        name: dept.name,
+        cost: dept.totalBudget,
+        efficiencyRating: dept.efficiencyRating,
+        description: dept.description || undefined,
+        headcount: dept.headcount || undefined,
+      }));
+    } else {
+      // Personal user data
+      const budgetSummary = await prisma.budgetSummary.findUnique({
+        where: { userId: session.user.id },
+      });
+      if (!budgetSummary) {
+        return NextResponse.json(
+          { error: "No budget data found. Please set up your budget first." },
+          { status: 400 }
+        );
+      }
+
+      // Fetch expenses (transactions)
+      const expenses = await prisma.transaction.findMany({
+        where: {
+          userId: session.user.id,
+          type: "EXPENSE",
+        },
+      });
+
+      // Group by category
+      const categoryMap = new Map<string, { total: number; count: number }>();
+      for (const exp of expenses) {
+        const cat = exp.category || "Other";
+        const existing = categoryMap.get(cat) || { total: 0, count: 0 };
+        existing.total += exp.amount;
+        existing.count += 1;
+        categoryMap.set(cat, existing);
+      }
+
+      expenseData = Array.from(categoryMap.entries()).map(([category, data]) => {
+        const efficiencyRating = Math.min(10, Math.max(1, 10 - (data.total / (budgetSummary.totalMonthlyIncome || 1)) * 10));
+        return {
+          name: category,
+          cost: data.total,
+          efficiencyRating,
+          description: `${data.count} transactions`,
+        };
+      });
     }
 
-    // Format expense data for AI
-    const expenseData: ExpenseData[] = departments.map((dept: {
-      name: string;
-      totalBudget: number;
-      efficiencyRating: number;
-      description: string | null;
-      headcount: number | null;
-    }) => ({
-      name: dept.name,
-      cost: dept.totalBudget,
-      efficiencyRating: dept.efficiencyRating,
-      description: dept.description || undefined,
-      headcount: dept.headcount || undefined,
-    }));
-
-    // Calculate totals for context
-    const totalBudget = expenseData.reduce((sum, e) => sum + e.cost, 0);
-    const avgEfficiency =
-      expenseData.reduce((sum, e) => sum + e.efficiencyRating, 0) /
-      expenseData.length;
+    // Calculate totals
+    totalBudget = isCompany ? expenseData.reduce((sum, e) => sum + e.cost, 0) : (await prisma.budgetSummary.findUnique({ where: { userId: session.user.id } }))?.totalMonthlyIncome || 0;
+    avgEfficiency = expenseData.length > 0 ? expenseData.reduce((sum, e) => sum + e.efficiencyRating, 0) / expenseData.length : 5;
 
     // Identify problem areas
-    const lowEfficiencyDepts = expenseData.filter(e => e.efficiencyRating < 5);
-    const highEfficiencyDepts = expenseData.filter(e => e.efficiencyRating >= 7);
-    const highCostDepts = [...expenseData].sort((a, b) => b.cost - a.cost).slice(0, 3);
+    lowEfficiencyDepts = expenseData.filter(e => e.efficiencyRating < 5);
+    highEfficiencyDepts = expenseData.filter(e => e.efficiencyRating >= 7);
+    highCostDepts = [...expenseData].sort((a, b) => b.cost - a.cost).slice(0, 3);
 
     // Build comprehensive prompt based on goal type
     let prompt = "";
 
     if (goalType === "EFFICIENCY") {
-      prompt = `You are an expert business financial consultant. Analyze this company's financial data and provide DETAILED, SPECIFIC cost-saving recommendations.
+      if (isCompany) {
+        prompt = `You are an expert business financial consultant. Analyze this company's financial data and provide DETAILED, SPECIFIC cost-saving recommendations.
 
 ## COMPANY FINANCIAL DATA
 
@@ -167,10 +217,68 @@ Focus on:
 - Redundant processes or overstaffing
 - Opportunities to consolidate or outsource
 - Quick wins vs. long-term structural changes`;
+      } else {
+        prompt = `You are a personal finance advisor. Analyze this person's financial data and provide DETAILED, SPECIFIC cost-saving recommendations.
 
+## PERSONAL FINANCIAL DATA
+
+**Overview:**
+- Monthly Income: $${totalBudget.toLocaleString()}
+- Average Expense Efficiency: ${avgEfficiency.toFixed(1)}/10
+- Number of Expense Categories: ${expenseData.length}
+- Categories with Low Efficiency: ${lowEfficiencyDepts.length}
+
+**Expense Details:**
+${expenseData.map((e, i) => `
+${i + 1}. **${e.name}**
+   - Monthly Cost: $${e.cost.toLocaleString()}
+   - Efficiency Rating: ${e.efficiencyRating}/10 ${e.efficiencyRating < 5 ? '⚠️ HIGH COST' : e.efficiencyRating >= 7 ? '✅ WELL MANAGED' : ''}
+   - Percentage of Income: ${((e.cost / totalBudget) * 100).toFixed(1)}%
+   - Notes: ${e.description}
+`).join('')}
+
+**Highest Cost Categories:** ${highCostDepts.map(d => d.name).join(', ')}
+
+Provide exactly 5 detailed cost-saving recommendations. For EACH recommendation, you MUST include:
+
+1. **Clear Title** - A specific, actionable title
+2. **Detailed Explanation** - Why this recommendation matters (2-3 sentences)
+3. **Specific Actions** - Bullet points of exact steps to take
+4. **Savings Estimate** - Quantified potential savings (dollar amount or percentage)
+5. **Priority Level** - HIGH (immediate action needed), MEDIUM (plan within 30 days), or LOW (long-term consideration)
+6. **Risk Assessment** - Any potential downsides to consider
+
+Format your response as follows for each recommendation:
+
+### RECOMMENDATION 1: [TITLE]
+**Priority:** [HIGH/MEDIUM/LOW]
+**Potential Savings:** $[AMOUNT] per month (or [X]% of expenses)
+**Impact Area:** [Category name or "Overall Budget"]
+
+**Why This Matters:**
+[2-3 sentence explanation]
+
+**Action Steps:**
+- [Specific action 1]
+- [Specific action 2]
+- [Specific action 3]
+
+**Risk Consideration:**
+[Brief note on any risks]
+
+---
+
+(Repeat for all 5 recommendations)
+
+Focus on:
+- Categories with HIGH cost relative to income
+- Finding cheaper alternatives or reducing frequency
+- Eliminating unnecessary subscriptions or habits
+- Better budgeting and tracking`;
+      }
     } else {
-      // GROWTH goal type
-      prompt = `You are an expert business growth strategist. Analyze this company's financial data and provide DETAILED, SPECIFIC recommendations to achieve revenue growth of $${(growthTarget || 10000).toLocaleString()}/month.
+      if (isCompany) {
+        prompt = `You are an expert business growth strategist. Analyze this company's financial data and provide DETAILED, SPECIFIC recommendations to achieve revenue growth of $${(growthTarget || 10000).toLocaleString()}/month.
 
 ## COMPANY FINANCIAL DATA
 
@@ -191,14 +299,14 @@ ${i + 1}. **${e.name}**
    ${e.description ? `- Notes: ${e.description}` : ''}
 `).join('')}
 
-**High Efficiency Departments (Best for Investment):** ${highEfficiencyDepts.map(d => `${d.name} (${d.efficiencyRating}/10)`).join(', ') || 'None identified'}
-**Low Efficiency Departments (Reallocate Funds From):** ${lowEfficiencyDepts.map(d => `${d.name} (${d.efficiencyRating}/10)`).join(', ') || 'None identified'}
+**High Efficiency Departments (Best for Investment):** ${highEfficiencyDepts.map(d => `${d.name} (${d.efficiencyRating}/10)`).join(', ')} || 'None identified'}
+**Low Efficiency Departments (Reallocate Funds From):** ${lowEfficiencyDepts.map(d => `${d.name} (${d.efficiencyRating}/10)`).join(', ')} || 'None identified'}
 
 ## YOUR TASK
 
 Provide exactly 5 detailed growth recommendations. For EACH recommendation, you MUST include:
 
-1. **Clear Title** - A specific, actionable growth initiative
+1. **Clear Title** - A specific growth initiative
 2. **Detailed Explanation** - Why this will drive growth (2-3 sentences)
 3. **Investment Required** - How much to invest and where to get the funds
 4. **Expected ROI** - Projected revenue increase
@@ -235,6 +343,64 @@ Focus on:
 - Sales and marketing optimization
 - Technology investments that scale
 - Strategic hiring in revenue-generating roles`;
+      } else {
+        prompt = `You are a personal finance growth strategist. Analyze this person's financial data and provide DETAILED, SPECIFIC recommendations to increase income and savings.
+
+## PERSONAL FINANCIAL DATA
+
+**Overview:**
+- Monthly Income: $${totalBudget.toLocaleString()}
+- Average Expense Efficiency: ${avgEfficiency.toFixed(1)}/10
+- Growth Potential: Focus on increasing income and optimizing savings
+
+**Expense Details:**
+${expenseData.map((e, i) => `
+${i + 1}. **${e.name}**
+   - Monthly Cost: $${e.cost.toLocaleString()}
+   - Efficiency Rating: ${e.efficiencyRating}/10 ${e.efficiencyRating >= 7 ? '✅ GOOD CONTROL' : e.efficiencyRating < 5 ? '⚠️ OPPORTUNITY TO SAVE MORE' : ''}
+   - Percentage of Income: ${((e.cost / totalBudget) * 100).toFixed(1)}%
+   - Notes: ${e.description}
+`).join('')}
+
+Provide exactly 5 detailed growth recommendations. For EACH recommendation, you MUST include:
+
+1. **Clear Title** - A specific growth initiative
+2. **Detailed Explanation** - Why this will drive growth (2-3 sentences)
+3. **Investment Required** - How much to invest or effort needed
+4. **Expected ROI** - Projected income increase or savings
+5. **Priority Level** - HIGH (implement immediately), MEDIUM (plan within 30 days), or LOW (long-term initiative)
+6. **Timeline** - When to expect results
+
+Format your response as follows for each recommendation:
+
+### RECOMMENDATION 1: [TITLE]
+**Priority:** [HIGH/MEDIUM/LOW]
+**Investment Needed:** $[AMOUNT] per month or time/effort
+**Expected Income Increase:** $[AMOUNT] per month (or [X]% growth)
+**Impact Area:** [Category or "Overall Finance"]
+**Timeline:** [When to expect results]
+
+**Growth Strategy:**
+[2-3 sentence explanation of the growth opportunity]
+
+**Action Steps:**
+- [Specific action 1]
+- [Specific action 2]
+- [Specific action 3]
+
+**Timeline:**
+[When to expect results]
+
+---
+
+(Repeat for all 5 recommendations)
+
+Focus on:
+- Increasing income through side hustles or raises
+- Optimizing expenses to free up savings
+- Investing in skills or assets that generate returns
+- Starting emergency funds or investments`;
+      }
     }
 
     // Call Gemini API using @google/genai SDK

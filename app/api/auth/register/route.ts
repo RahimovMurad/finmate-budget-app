@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: "Something went wrong. Please try again.", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }
