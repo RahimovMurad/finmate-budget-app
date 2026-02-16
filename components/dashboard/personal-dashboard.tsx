@@ -14,10 +14,12 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GoalProgressCircle } from "./circular-progress";
-import { IncomeVsExpenseChart } from "./expense-chart";
+import dynamic from "next/dynamic";
 import { formatCurrency, formatDate, formatRelativeTime } from "@/lib/utils";
 import type { Income, Transaction, Goal, BudgetSummary } from "@prisma/client";
+
+const GoalProgressCircle = dynamic(() => import("./circular-progress").then(mod => ({ default: mod.GoalProgressCircle })));
+const IncomeVsExpenseChart = dynamic(() => import("./expense-chart").then(mod => ({ default: mod.IncomeVsExpenseChart })));
 
 interface PersonalDashboardProps {
   user: {
@@ -115,7 +117,7 @@ export function PersonalDashboard({
       {/* Stats Cards */}
       <motion.div
         variants={itemVariants}
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="grid gap-4 md:grid-cols-3 lg:grid-cols-5"
       >
         <Card className="card-hover">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -188,6 +190,23 @@ export function PersonalDashboard({
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Available to spend/save daily
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="card-hover">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Savings Rate
+            </CardTitle>
+            <PiggyBank className="w-5 h-5 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-500">
+              {totalMonthlyIncome > 0 ? `${((netMonthly / totalMonthlyIncome) * 100).toFixed(1)}%` : '0%'}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {netMonthly > 0 ? `You save ${formatCurrency(netMonthly)} monthly` : 'No savings this month'}
             </p>
           </CardContent>
         </Card>
