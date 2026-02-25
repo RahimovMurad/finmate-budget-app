@@ -115,14 +115,14 @@ export async function POST(request: NextRequest) {
       const expenses = await prisma.transaction.findMany({
         where: {
           userId: session.user.id,
-          type: "EXPENSE",
+          type: { in: ["FIXED_EXPENSE", "VARIABLE_EXPENSE"] },
         },
       });
 
       // Group by category
       const categoryMap = new Map<string, { total: number; count: number }>();
       for (const exp of expenses) {
-        const cat = exp.category || "Other";
+        const cat = exp.name || "Other";
         const existing = categoryMap.get(cat) || { total: 0, count: 0 };
         existing.total += exp.amount;
         existing.count += 1;
