@@ -7,7 +7,12 @@ export function middleware(request: NextRequest) {
   // Check for auth session cookie (NextAuth v5 uses this cookie name)
   const sessionToken =
     request.cookies.get("authjs.session-token")?.value ||
-    request.cookies.get("__Secure-authjs.session-token")?.value;
+    request.cookies.get("__Secure-authjs.session-token")?.value ||
+    request.cookies.get("next-auth.session-token")?.value;
+
+  console.log("Middleware - Path:", pathname);
+  console.log("Middleware - Session token exists:", !!sessionToken);
+  console.log("Middleware - Available cookies:", Object.keys(request.cookies.getAll()));
 
   const isLoggedIn = !!sessionToken;
 
