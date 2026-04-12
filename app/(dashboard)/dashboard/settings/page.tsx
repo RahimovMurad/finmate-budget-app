@@ -16,9 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
+  const { language } = useLanguage();
 
   const user = session?.user;
   const initials = user?.name
