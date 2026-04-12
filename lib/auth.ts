@@ -42,7 +42,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  trustHost: true, // Add this for Netlify
+  trustHost: true,
+  cookies: {
+    sessionToken: {
+      name: `authjs.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+        domain: ".netlify.app"
+      }
+    }
+  },
   pages: {
     signIn: "/login",
     error: "/login",
