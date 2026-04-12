@@ -72,10 +72,9 @@ export default function LoginPage() {
           variant: "success",
         });
 
-        // Tam səhifə yeniləmə ilə redirect (middleware session-i tani sin deye)
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 1000);
+        // Next.js router ilə redirect
+        router.push("/dashboard");
+        router.refresh();
       }
     } catch (error) {
       console.error("Login error caught:", error); // Debug

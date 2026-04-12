@@ -1,5 +1,30 @@
 -- FinMate Database Migration Script
--- Run this in Supabase SQL Editor
+-- Run this in Neon SQL Editor
+
+-- Create ENUM types first (Neon PostgreSQL compatible)
+DO $$ BEGIN
+    CREATE TYPE "UserRole" AS ENUM ('PERSONAL', 'COMPANY');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE "TransactionType" AS ENUM ('EARNING', 'FIXED_EXPENSE', 'VARIABLE_EXPENSE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE "Frequency" AS ENUM ('HOURLY', 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE "GoalType" AS ENUM ('PERSONAL_GOAL', 'EFFICIENCY', 'GROWTH');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Create tables if they don't exist
 CREATE TABLE IF NOT EXISTS "User" (
@@ -9,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "User" (
   "emailVerified" TIMESTAMP,
   image TEXT,
   password TEXT,
-  role TEXT DEFAULT 'PERSONAL',
+  role "UserRole" DEFAULT 'PERSONAL',
   "companyName" TEXT,
   "onboardingComplete" BOOLEAN DEFAULT false,
   "createdAt" TIMESTAMP DEFAULT now(),
@@ -51,7 +76,7 @@ CREATE TABLE IF NOT EXISTS "Income" (
   "userId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   amount FLOAT NOT NULL,
-  frequency TEXT NOT NULL,
+  frequency "Frequency" NOT NULL,
   "monthlyAmount" FLOAT,
   "dailyAmount" FLOAT,
   "reliabilityRating" INTEGER DEFAULT 5,
@@ -66,7 +91,7 @@ CREATE TABLE IF NOT EXISTS "Transaction" (
   name TEXT NOT NULL,
   description TEXT,
   amount FLOAT NOT NULL,
-  type TEXT NOT NULL,
+  type "TransactionType" NOT NULL,
   "dayOfMonth" INTEGER,
   "transactionDate" TIMESTAMP DEFAULT now(),
   "monthlyAmount" FLOAT,
@@ -89,7 +114,7 @@ CREATE TABLE IF NOT EXISTS "Goal" (
   "daysRemaining" INTEGER,
   "dailySaveRate" FLOAT,
   "weeklySaveRate" FLOAT,
-  "goalType" TEXT DEFAULT 'PERSONAL_GOAL',
+  "goalType" "GoalType" DEFAULT 'PERSONAL_GOAL',
   "growthTarget" FLOAT,
   "isCompleted" BOOLEAN DEFAULT false,
   "completedAt" TIMESTAMP,
@@ -109,7 +134,7 @@ CREATE TABLE IF NOT EXISTS "Department" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
   "userId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  "totalBudget" FLOAT NOT NULL,
+  totalBudget FLOAT NOT NULL,
   "efficiencyRating" INTEGER DEFAULT 5,
   description TEXT,
   headcount INTEGER,
