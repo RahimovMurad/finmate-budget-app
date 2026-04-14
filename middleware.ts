@@ -8,11 +8,16 @@ export function middleware(request: NextRequest) {
   const sessionToken =
     request.cookies.get("authjs.session-token")?.value ||
     request.cookies.get("__Secure-authjs.session-token")?.value ||
+<<<<<<< HEAD
     request.cookies.get("next-auth.session-token")?.value;
 
   console.log("Middleware - Path:", pathname);
   console.log("Middleware - Session token exists:", !!sessionToken);
   console.log("Middleware - Available cookies:", Object.keys(request.cookies.getAll()));
+=======
+    request.cookies.get("next-auth.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value;
+>>>>>>> 212be71 (Fix session token detection in middleware for dashboard redirect.)
 
   const isLoggedIn = !!sessionToken;
 
